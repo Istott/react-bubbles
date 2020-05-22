@@ -13,53 +13,43 @@ const ColorList = ({ colors, updateColors }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
   const { id } = useParams();
-  // const { push } = useHistory();
+  const { push } = useHistory();
 
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
   };
 
-  useEffect(() => {
-    console.log('im triggered')
-
-    const getNewColors = () => {
-      setEditing(true)
-      
-      axiosWithAuth()
-      .get(`/api/colors/`)
-      .then(res => {
-        console.log('get', res)
-        setColorToEdit({
-            ...res.data,
-        });
-      })
-      .catch(err => console.log(err));
-    }
-    getNewColors();
-
-  }, [saveEdit]);
-
   const saveEdit = e => {
     e.preventDefault();
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
-    // const updatedColor = {
-    //   ...colorToEdit,
-    //   color: e.target.value,
-    //   code: { hex: e.target.value}
-    // }
 
     axiosWithAuth()
       .put(`/api/colors/${id}`, colorToEdit)
       .then(res => {
         console.log('put', res)
         updateColors(colors.map(m => m.id !== id ? m : res.data))
+        push('/protected')
       })
       .catch(err => console.log('put catch', err));
 
   };
+
+  // useEffect(() => {
+  //   console.log('im triggered')
+  //   // setEditing(true)
+    
+  //   axiosWithAuth()
+  //     .get(`/api/colors/`)
+  //     .then(res => {
+  //       console.log('get', res)
+  //       updateColors(res.data)
+  //     })
+  //     .catch(err => console.log(err))
+
+  // }, [updateColors]);
 
   const deleteColor = color => {
     // make a delete request to delete this color

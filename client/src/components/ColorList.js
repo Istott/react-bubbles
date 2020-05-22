@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
-// import axios from "axios";
+import React, { useState } from "react";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
-import { useParams, useHistory } from "react-router-dom";
 
 const initialColor = {
   color: "",
@@ -12,8 +10,6 @@ const ColorList = ({ colors, updateColors }) => {
   console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
-  const { id } = useParams();
-  const { push } = useHistory();
 
   const editColor = color => {
     setEditing(true);
@@ -27,47 +23,38 @@ const ColorList = ({ colors, updateColors }) => {
     // where is is saved right now?
 
     axiosWithAuth()
-      .put(`/api/colors/:id`, colorToEdit)
+      .put(`/api/colors/${colorToEdit.id}`, colorToEdit)
       .then(res => {
-        console.log('put', res)
-        updateColors(colors.map(m => m.id !== id ? m : res.data))
-        axiosWithAuth()
-          .get(`/api/colors/`)
-          .then(res => {
-            console.log('get', res)
-            updateColors(res.data)
-          })
-          .catch(err => console.log('second put catch', err))
+        console.log('put', res.data)
+
+          axiosWithAuth()
+            .get(`/api/colors/`)
+            .then(res => {
+              console.log('get', res.data)
+              updateColors(res.data)
+            })
+            .catch(err => console.log('second put catch', err))
       })
       .catch(err => console.log('put catch', err));
 
   };
 
-  // useEffect(() => {
-  //   console.log('im triggered')
-  //   // setEditing(true)
-    
-  //   axiosWithAuth()
-  //     .get(`/api/colors/`)
-  //     .then(res => {
-  //       console.log('get', res)
-  //       updateColors(res.data)
-  //     })
-  //     .catch(err => console.log(err))
-
-  // }, [updateColors]);
-
   const deleteColor = color => {
-    // make a delete request to delete this color
-    // color.preventDefault();
     console.log('delete got pushed')
 
     axiosWithAuth()
       .delete(`/api/colors/${color.id}`)
       .then(res => {
         console.log(res.data)
-        updateColors(colors.filter(v => `${v.id}` !== res.data))
-        // push("/protected");
+
+          axiosWithAuth()
+            .get('/api/colors/')
+            .then(res => {
+              console.log(res)
+              updateColors(res.data)
+            })
+            .catch(err => console.log(err))
+          
       })
       .catch(err => console.log(err));
   };

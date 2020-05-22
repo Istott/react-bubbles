@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-// import { axiosWithAuth } from "../utils/axiosWithAuth";
+import React, {useState} from "react";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 // import Loader from "react-loader-spinner";
 
 // const Login = () => {
@@ -17,7 +17,7 @@ import React, {useEffect, useState} from "react";
 
 
 
-const Login = () => {
+const Login = props => {
   // const [username, setUserName] = useState('');
   // const [password, setPassword] =  useState('');
   // const [fetchingData, setFetchingData] = useState('');
@@ -38,24 +38,19 @@ const Login = () => {
 
   const login = e => {
     e.preventDefault();
-    // make a POST request to the login endpoint
-    // _if_ the creds match what's in the database, the server will return a JSON web token
-    // set the token to localStorage (sessions)
-    // navigate the user to the "/protected" route
-    // axiosWithAuth()
-    //   .post("/api/login", credentials)
-    //   .then(res => {
-    //     console.log(res);
-    //     setTimeout(() => {
-    //     localStorage.setItem("token", res.data.payload);
-    //     this.props.history.push("/protected");
-    //     }, 2000)
-    //     this.setState({
-    //         fetchingData: true
-    //     })
-    //     console.log('will mount', this.state.fetchingData)
-    //   })
-    //   .catch(err => console.log(err));
+
+    axiosWithAuth()
+      .post("/api/login", credentials)
+      .then(res => {
+        console.log(res);
+        // setTimeout(() => {
+        localStorage.setItem("token", res.data.payload);
+        props.history.push("/protected");
+        // }, 2000)
+        setCredentials.fetchingData(true)
+        console.log('will mount', this.state.fetchingData)
+      })
+      .catch(err => console.log(err));
   };
 
   return (

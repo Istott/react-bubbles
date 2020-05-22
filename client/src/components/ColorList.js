@@ -27,11 +27,17 @@ const ColorList = ({ colors, updateColors }) => {
     // where is is saved right now?
 
     axiosWithAuth()
-      .put(`/api/colors/${id}`, colorToEdit)
+      .put(`/api/colors/:id`, colorToEdit)
       .then(res => {
         console.log('put', res)
         updateColors(colors.map(m => m.id !== id ? m : res.data))
-        push('/protected')
+        axiosWithAuth()
+          .get(`/api/colors/`)
+          .then(res => {
+            console.log('get', res)
+            updateColors(res.data)
+          })
+          .catch(err => console.log('second put catch', err))
       })
       .catch(err => console.log('put catch', err));
 
